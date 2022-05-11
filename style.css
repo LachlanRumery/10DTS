@@ -1,0 +1,57 @@
+@keyframes wrong {
+    20% {
+        color: red;
+        transform: rotate(100deg);
+    }
+    50% {
+        font-size: 50pt;
+        transform: rotate(0deg);
+    }
+    70% {
+        color: red;
+        transform: rotate(-100deg);
+    }
+    100% {
+        color: black;
+        transform: rotate(0deg);
+    }
+}
+#equation {
+    display: inline-block;
+}
+
+#answer {
+    display: inline-block;
+    position: absolute;
+}
+
+#correct {
+    display: inline-block;
+}
+
+#selfResults {
+    background-color: rgb(68, 72, 97);
+
+    transition: all 0.5s;
+    font-size: larger;
+    color: white;
+}
+
+.input {
+    font-size: 30pt;
+    text-align: center;
+}
+
+.custombg {
+    background-color: rgb(68, 72, 97);
+}
+
+.results {
+    margin: auto;
+    width: 70vw;
+    align-content: center;
+}
+
+.wrong {
+    animation: wrong .5s linear;
+}
