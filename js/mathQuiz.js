@@ -3,40 +3,121 @@ var currentInput = ''
 
 class mathProblems {
     constructor() {
-        this.difficulty; this.correct=0; this.onlyMultiply; this.onlyAdd; this.noEquations = 10; this.equationNo = 0;
-        this.newEquation()
+        this.results = {
+            multiply: {
+                correct: 0,
+                wrong: 0
+            },
+            add: {
+                correct: 0,
+                wrong: 0
+            },
+            sub: {
+                correct: 0,
+                wrong: 0
+            },
+            attempts: 0,
+            totalCorrect: 0
+        }
+        this.settings = {
+            onlyMultiply: localStorage.getItem('onlyMultiply') || false,
+            onlyAdd: localStorage.getItem('onlyAdd') || false,
+            onlySub: localStorage.getItem('onlySub') || false,
+            noEquations: 10
+        }
+        this.equationNo = 0;
+        this.newEquation();
+        this.displayProgress(100);
     }
 
     newEquation() {
         this.numbers = [Math.round(Math.random()*10), Math.round(Math.random()*10)]
-        if (this.onlyMultiply || Math.random()>0.5 & !this.onlyAdd) {
-            this.solution=this.numbers[0]*this.numbers[1]
-            this.textEquation = this.numbers.join(' x ') + ' = '
-            return this.parseEquation()
+        switch(true) {
+            case this.settings.onlyMultiply: {
+                this.cache = {
+                    solution: this.numbers[0]*this.numbers[1],
+                    textEquation: this.numbers.join(' x ') + ' = ',
+                    operation: '*'
+                }
+                return this.parseEquation()
+            }
+
+            case this.settings.onlyAdd: {
+                this.cache = {
+                    solution: this.numbers[0]+this.numbers[1],
+                    textEquation: this.numbers.join(' + ') + ' = ',
+                    operation: '+'
+                }
+                return this.parseEquation()
+            }
+
+            case this.settings.onlySub: {
+                this.cache = {
+                    solution: this.numbers[0]-this.numbers[1],
+                    textEquation: this.numbers.join(' - ') + ' = ',
+                    operation: '-'
+                }
+                return this.parseEquation()
+            }
+
+            default: {
+                if (Math.random()>0.66) {
+                    this.settings.onlyAdd=true; 
+                    return this.newEquation();
+                };
+                if (Math.random()>0.5) {
+                    this.settings.onlySub=true;
+                    return this.newEquation();
+                }
+                this.settings.onlyMultiply = true;
+                return this.newEquation()
+            }
         }
-        this.solution=this.numbers[0]+this.numbers[1]
-        this.textEquation = this.numbers.join(' + ') + ' = '
-        return this.parseEquation()
     }
 
     parseEquation() {
-        equation.innerText=this.textEquation
+        equation.innerText=this.cache.textEquation
     }
 
     checkSolution() {
-        if (this.equationNo==this.noEquations) {
+        this.results.attempts++;
+        if (this.equationNo>=this.settings.noEquations) {
             this.end()
         }
-        if(parseInt(currentInput)!=this.solution) {
+        if(parseInt(currentInput)!=this.cache.solution) {
             this.displayWrong()
+            switch (this.cache.operation) {
+                case '*': {this.results.multiply.wrong++; break}
+                case '+': {this.results.add.wrong++; break}
+                case '-': {this.results.sub.wrong++; break}
+            }    
             return;
         }
-        this.correct++;
+        // Add stats
+        this.results.totalCorrect++;
+        switch (this.cache.operation) {
+            case '*': {this.results.multiply.correct++; break}
+            case '+': {this.results.add.correct++; break}
+            case '-': {this.results.sub.correct++; break}
+        }
+
         this.equationNo++;
-        this.displayProgress((10-this.equationNo)*10)
+        this.displayProgress((10-(this.equationNo-1))*10)
         this.newEquation()
         currentInput=''
         document.getElementById('answer').innerText = ''
+    }
+
+    skip() {
+        this.equationNo++;
+        this.results.attempts++;
+        switch (this.cache.operation) {
+            case '*': {this.results.multiply.wrong++; break}
+            case '+': {this.results.add.wrong++; break}
+            case '-': {this.results.sub.wrong++; break}
+        }    
+        this.newEquation();
+        this.displayProgress((10-(this.equationNo-1))*10);
     }
 
     displayProgress(percent) {
@@ -48,21 +129,46 @@ class mathProblems {
         setTimeout(()=>document.getElementById('answer').classList.remove('wrong'), 501)
     }
 
-    restart() {
-        x = new mathProblems()
-        x.displayProgress(100)
-    }
-
     end() {
-        localStorage.setItem('score', this.correct);
-        this.restart()
+        document.getElementById('quizEnd').style.visibility = "visible";
+        document.getElementById("quizContent").style.visibility = "hidden";
+        document.getElementById("start").style.visibility = "hidden";
+
+        document.getElementById('resultScore').innerText = Math.round((this.settings.noEquations/this.results.attempts)*100)
     }
 }
 
 function main() {
     x = new mathProblems()
     document.getElementById("quizContent").style.visibility = "visible";
-    document.getElementById("start").style.visibility = "hidden"
+    document.getElementById("start").style.visibility = "hidden";
+    document.getElementById("quizEnd").style.visibility = "hidden";
+}
+
+function restart() {
+    document.getElementById("quizContent").style.visibility = "hidden";
+    document.getElementById("start").style.visibility = "visible";
+    document.getElementById("quizEnd").style.visibility = "hidden";
+}
+
+function focusButton(focus) {
+    switch(focus) {
+        case "+": {
+            localStorage.setItem('onlyAdd', true)
+            localStorage.setItem('onlySub', false)
+            localStorage.setItem('onlyMultiply', false)
+        }
+        case '-': {
+            localStorage.setItem('onlyAdd', false)
+            localStorage.setItem('onlySub', true)
+            localStorage.setItem('onlyMultiply', false)
+        }
+        case "*": {
+            localStorage.setItem('onlyAdd', false)
+            localStorage.setItem('onlySub', false)
+            localStorage.setItem('onlyMultiply', true)
+        }
+    }
 }
 
 document.addEventListener("keydown", function(event) {
@@ -75,6 +181,10 @@ document.addEventListener("keydown", function(event) {
     }
     if (event.key == "Backspace") {
         currentInput = currentInput.slice(0,-1)
+        document.getElementById('answer').innerText = currentInput
+    }
+    if (event.key=="-") {
+        currentInput+="-"
         document.getElementById('answer').innerText = currentInput
     }
 })
