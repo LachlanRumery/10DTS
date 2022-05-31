@@ -3,6 +3,9 @@ var alphabet = "abcdefghijklmnopqrstyvwxyz"
 
 class englishProblems {
     constructor() {
+        /*
+        Sets initial variables/objects
+        */
         this.results = {
             attempts: 0,
             totalCorrect: 0
@@ -19,8 +22,11 @@ class englishProblems {
 
     newQuestion() {
         document.getElementById('input').innerHTML = ""
-        this.cache = {solution: words[Math.round(Math.random()*words.length)], otherWords: []}
+        this.cache = {solution: words[Math.round(Math.random()*words.length)], otherWords: []} // sets initial cache object and generates cache.solution
         for (let i=0; i<this.settings.otherWords; i++) {
+            /*
+            Generates the incorrectly spelt words and adds them to cache.otherWords
+            */
             let word = words[Math.round(Math.random()*words.length)-1] || words[0]
 
             let index = Math.round(Math.random()*word.length)
@@ -31,6 +37,9 @@ class englishProblems {
     }
 
     parseQuestion() {
+        /*
+        Function adds the actual word and the incorrect words to the page as buttons that can be clicked.
+        */
         document.getElementById('input').innerHTML+=`<button type="button" class="btn btn-outline-primary" onclick="x.checkAnswer('${this.cache.solution}')">${this.cache.solution}</button>`
         this.cache.otherWords.forEach(word => {
             document.getElementById('input').innerHTML+=`<button type="button" class="btn btn-outline-primary" onclick="x.checkAnswer('${this.word}')">${word}</button>`
@@ -39,7 +48,7 @@ class englishProblems {
 
     checkAnswer(answer) {
         this.results.attempts++;
-        if (this.questionNo>=this.settings.noQuestions) {
+        if (this.questionNo>=this.settings.noQuestions) { // checks to see if the quiz should be ended
             this.end()
         }
         if(answer!=this.cache.solution) return false;
@@ -67,18 +76,18 @@ class englishProblems {
         document.getElementById("quizContent").style.visibility = "hidden";
         document.getElementById("start").style.visibility = "hidden";
 
-        document.getElementById('resultScore').innerText = Math.round((this.settings.noQuestions/this.results.attempts)*100)
+        document.getElementById('resultScore').innerText = Math.round((this.settings.noQuestions/this.results.attempts)*100) // generates score
     }
 }
 
-function main() {
+function main() { // starts the quiz
     x = new englishProblems()
     document.getElementById("quizContent").style.visibility = "visible";
     document.getElementById("start").style.visibility = "hidden";
     document.getElementById("quizEnd").style.visibility = "hidden";
 }
 
-function restart() {
+function restart() { // sends user back to the start of quiz page
     document.getElementById("quizContent").style.visibility = "hidden";
     document.getElementById("start").style.visibility = "visible";
     document.getElementById("quizEnd").style.visibility = "hidden";

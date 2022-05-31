@@ -3,6 +3,9 @@ var currentInput = ''
 
 class mathProblems {
     constructor() {
+        /*
+        Creates initial objects and quiz conditions
+        */
         this.results = {
             multiply: {
                 correct: 0,
@@ -20,7 +23,10 @@ class mathProblems {
             totalCorrect: 0
         }
         this.settings = {
-            onlyMultiply: localStorage.getItem('onlyMultiply') || false,
+            /*
+            If the condition has been set then use that, otherwise don't use it
+            */
+            onlyMultiply: localStorage.getItem('onlyMultiply') || false, 
             onlyAdd: localStorage.getItem('onlyAdd') || false,
             onlySub: localStorage.getItem('onlySub') || false,
             noEquations: 10
@@ -31,8 +37,11 @@ class mathProblems {
     }
 
     newEquation() {
-        this.numbers = [Math.round(Math.random()*10), Math.round(Math.random()*10)]
+        this.numbers = [Math.round(Math.random()*10), Math.round(Math.random()*10)] // Generates two random numbers.
         switch(true) {
+            /*
+            Use settings if set, otherwise, choose a random one.
+            */
             case this.settings.onlyMultiply: {
                 this.cache = {
                     solution: this.numbers[0]*this.numbers[1],
@@ -76,7 +85,7 @@ class mathProblems {
     }
 
     parseEquation() {
-        equation.innerText=this.cache.textEquation
+        equation.innerText=this.cache.textEquation // Displays equation
     }
 
     checkSolution() {
@@ -134,7 +143,7 @@ class mathProblems {
         document.getElementById("quizContent").style.visibility = "hidden";
         document.getElementById("start").style.visibility = "hidden";
 
-        document.getElementById('resultScore').innerText = Math.round((this.settings.noEquations/this.results.attempts)*100)
+        document.getElementById('resultScore').innerText = Math.round((this.settings.noEquations/this.results.attempts)*100) // Generates score
     }
 }
 
@@ -152,6 +161,9 @@ function restart() {
 }
 
 function focusButton(focus) {
+    /*
+    Sets what type of quiz the user will do.
+    */
     switch(focus) {
         case "+": {
             localStorage.setItem('onlyAdd', true)
@@ -172,6 +184,9 @@ function focusButton(focus) {
 }
 
 document.addEventListener("keydown", function(event) {
+    /*
+    Gets the user input
+    */
     if (event.key=="Enter") {
         x.checkSolution()
     }
