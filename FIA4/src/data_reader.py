@@ -35,12 +35,12 @@ class CrimeData:
 	Index: int
 
 
-class CSVHandler:
-	def __init__(self, filename) -> None:
+class __CSVHandler__:
+	def __init__(self, filename: str) -> None:
 		"""
-        Slay
+        **DO NOT CALL, BACKGROUND PROCESS**
 
-        :param filename:
+        :param filename: Name of file
         """
 		self.filename = filename
 
@@ -64,6 +64,7 @@ class CSVHandler:
 	def process(self) -> dict:
 		"""
         Processes CSV data
+
         :return:
         """
 		crimes = {}
@@ -125,17 +126,35 @@ class CSVHandler:
 
 
 class DataHandler:
-	def __init__(self, file):
-		self.CSVHandler = CSVHandler(file)
-		self.crimeData = self.CSVHandler.process
-
-	def month_totals(self, crime, start=2001, end=2021) -> dict:
+	def __init__(self, file: str):
 		"""
 
-		:param crime:
-		:param start: Optional
-		:param end:
-		:return: {'Jan-01': 10, 'Feb-01': 9 ... 'Dec-21': 12}
+		:param file: Name of data file
+		"""
+		self.CSVHandler = __CSVHandler__(file)
+		self.crimeData = self.CSVHandler.process
+
+	def get_crimes(self):
+		"""
+
+		:return:
+		"""
+		return list(self.crimeData.keys())
+
+	def month_totals(self, crime: str, start=2001, end=2021, male=True, female=True,
+					 not_stated=True, adult=True, juvenile=True) -> dict:
+		"""
+		Get the total amount of the specified crime for each month within a range.
+
+		:param crime: The crime you want to see the data of.
+		:param start: *Optional Start year
+		:param end: *Optional End year
+		:param male:
+		:param female:
+		:param not_stated:
+		:param adult:
+		:param juvenile:
+		:return:
 		"""
 		current = start
 		totals = {}
@@ -146,7 +165,23 @@ class DataHandler:
 		while current < end + 1:
 			for month in yearly_data[str(current)]:
 				z = yearly_data[str(current)][month]
-				total = z.Total
+				total = 0
+
+				if male:
+					total += z.Male
+				if female:
+					total += z.Female
+				if not_stated:
+					total += z.Unknown
+				if adult:
+					total += z.Adult
+				if juvenile:
+					total += z.Juvenile
+
 				totals[f'{month}-{str(current)[2:4]}'] = total
 			current += 1
 		return totals
+
+
+x = DataHandler('../resources/Raw.csv')
+print(x.crimeData)
