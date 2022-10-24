@@ -52,7 +52,8 @@ class QLDCrimeReport(tk.Tk):
 class LandingPage(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent)
-		label = tk.Label(self, text="Start Page", font=H1)
+		label = tk.Label(self, text="Queensland Crime Report", font=H1)
+		label.config(bg='white')
 		label.pack()
 
 		crimes = DataHandler('../resources/Raw.csv').get_crimes()
@@ -98,8 +99,6 @@ App = QLDCrimeReport()
 App.title('QLD Crime Statistics')
 photo = tk.PhotoImage(file='../resources/logo.png')
 App.wm_iconphoto(False, photo)
-App.geometry('800x600')
+App.geometry('350x300')
 
 App.mainloop()
-
-# TODO: Choose what crime to select
