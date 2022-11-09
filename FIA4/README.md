@@ -1,5 +1,8 @@
-# Psuedocode
-## Dataclasses
+# Queensland Crime Report: Python GUI
+
+
+## Psuedocode
+### Dataclasses
 ```js
 CLASS YEARDATA
     SET total
@@ -38,7 +41,7 @@ CLASS CRIMEDATA
 ```
 
 
-## CSV Handler
+### CSV Handler
 ```js
 CLASS CSVHANDLER (FILE)
     CONSTRUCTOR
@@ -109,8 +112,4 @@ CLASS CSVHANDLER (FILE)
                 index = index + 1
             
             RETURN crimes
-
-
-
-
 ```
