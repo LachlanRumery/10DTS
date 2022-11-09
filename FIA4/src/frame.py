@@ -12,7 +12,7 @@ matplotlib.use('TKAgg')
 # Fonts
 H1 = ('Monospace', 20)
 
-# Global
+# Global Variables
 global variable
 global canvas
 
